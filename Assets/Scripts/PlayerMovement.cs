@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
+    public Animator animator;
     [Header("Hareket Ayarları")]
     public float moveSpeed = 12.0f;      // Hızı biraz artırdık
     public float turnSpeed = 25f;        // Dönüş hızı daha keskin olsun
@@ -39,11 +40,13 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
+
         // Girdi Al
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         movementInput = new Vector3(h, 0f, v).normalized;
 
+       
         // Mouse'a Dön
         TurnPlayerToMouse();
 
@@ -55,6 +58,13 @@ public class PlayerMovement : MonoBehaviour
                 StartDash();
             }
         }
+        Vector3 localVelocity = transform.InverseTransformDirection(rb.linearVelocity);
+
+        // Hız değerlerini animatöre gönderiyoruz.
+        // Koşma hızı (moveSpeed) diyelim 5 ise, bunu 1'e oranlamak için bölüyoruz.
+        animator.SetFloat("VelocityX", localVelocity.x / moveSpeed);
+        animator.SetFloat("VelocityZ", localVelocity.z / moveSpeed);
+
     }
 
     void FixedUpdate()
